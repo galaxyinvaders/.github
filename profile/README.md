@@ -1,4 +1,4 @@
-# Galaxy Invaders  
+# We are Galaxy Invaders  
 
 **Conquer the Cloud. Invade the Galaxy.**  
 
