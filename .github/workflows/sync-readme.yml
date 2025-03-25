@@ -10,13 +10,15 @@ on:
 jobs:
   sync-readme:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Allows pushing to the repo
     steps:
       - name: Checkout .github repo
         uses: actions/checkout@v4
 
       - name: Clone GitHub Pages Repo
         run: |
-          git clone https://github.com/galaxyinvaders/galaxyinvaders.github.io.git pages
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/galaxyinvaders/galaxyinvaders.github.io.git pages
 
       - name: Sync README to index.md
         run: |
