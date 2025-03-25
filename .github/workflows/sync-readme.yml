@@ -1,34 +1,31 @@
-name: Sync README to GitHub Pages
+name: Sync README to Pages
 
 on:
   push:
     paths:
-      - "profile/README.md"
-    branches:
-      - main
+      - ".github/profile/README.md"
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   sync-readme:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write  # Allows pushing to the repo
-    steps:
-      - name: Checkout .github repo
-        uses: actions/checkout@v4
 
-      - name: Clone GitHub Pages Repo
+    steps:
+      - name: Checkout .github Repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # Use PAT instead of GitHub token
+
+      - name: Clone galaxyinvaders.github.io Repo
         run: |
-          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/galaxyinvaders/galaxyinvaders.github.io.git pages
+          git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/galaxyinvaders/galaxyinvaders.github.io.git pages
 
       - name: Sync README to index.md
         run: |
-          cp profile/README.md pages/index.md
-
-      - name: Commit and Push Changes
-        run: |
           cd pages
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp ../.github/profile/README.md index.md
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add index.md
-          git diff --cached --quiet || git commit -m "Sync README from .github/profile to index.md"
-          git push
+          git commit -m "Sync README from .github/profile to index.md" || echo "No changes to commit"
+          git push origin main
