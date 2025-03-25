@@ -1,0 +1,29 @@
+name: Sync README to GitHub Pages
+
+on:
+  push:
+    paths:
+      - "README.md"
+    branches:
+      - main
+
+jobs:
+  sync-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout .github repo
+        uses: actions/checkout@v4
+
+      - name: Clone GitHub Pages Repo
+        run: |
+          git clone https://github.com/galaxyinvaders/galaxyinvaders.github.io.git pages
+          cp README.md pages/index.md
+
+      - name: Commit and Push Changes
+        run: |
+          cd pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.md
+          git diff --cached --quiet || git commit -m "Sync README from .github repo"
+          git push
